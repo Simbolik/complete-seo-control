@@ -1,0 +1,588 @@
+/**
+ * Complete SEO Control - Admin Styles
+ *
+ * @package Complete_SEO_Control
+ * @since   1.0.0
+ */
+
+/* ========================================================================
+   General Layout
+   ======================================================================== */
+
+.csc-admin-wrap {
+	margin-right: 20px;
+}
+
+.csc-description {
+	font-size: 14px;
+	margin-bottom: 20px;
+	color: #646970;
+}
+
+/* ========================================================================
+   Tab Navigation
+   ======================================================================== */
+
+.csc-tab-nav {
+	margin-bottom: 20px;
+}
+
+.csc-tab-nav .nav-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 14px;
+}
+
+.csc-tab-nav .nav-tab .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+/* ========================================================================
+   Tab Content
+   ======================================================================== */
+
+.csc-tab-content {
+	position: relative;
+	min-height: 400px;
+}
+
+.csc-tab-pane {
+	display: none;
+}
+
+.csc-tab-pane.active {
+	display: block;
+}
+
+/* ========================================================================
+   Cards
+   ======================================================================== */
+
+.csc-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+	padding: 20px;
+	margin-bottom: 20px;
+}
+
+.csc-card h2 {
+	margin-top: 0;
+	margin-bottom: 10px;
+	font-size: 1.3em;
+	font-weight: 600;
+}
+
+.csc-card > p {
+	margin-top: 0;
+	color: #646970;
+}
+
+/* ========================================================================
+   Forms
+   ======================================================================== */
+
+.csc-form .form-table th {
+	padding: 15px 10px 15px 0;
+	width: 200px;
+}
+
+.csc-form .form-table td {
+	padding: 15px 10px;
+}
+
+.csc-char-count {
+	display: inline-block;
+	margin-left: 10px;
+	font-weight: 600;
+	color: #2271b1;
+}
+
+/* ========================================================================
+   Search Engine Preview (SERP)
+   ======================================================================== */
+
+.csc-preview-section {
+	margin-top: 30px;
+	padding: 20px;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+}
+
+.csc-preview-section h3 {
+	margin-top: 0;
+	margin-bottom: 15px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.csc-serp-preview {
+	background: #fff;
+	padding: 15px;
+	border-radius: 3px;
+	max-width: 600px;
+}
+
+.csc-serp-preview .serp-title {
+	color: #1a0dab;
+	font-size: 20px;
+	line-height: 1.3;
+	margin-bottom: 3px;
+	font-weight: 400;
+	cursor: pointer;
+	word-wrap: break-word;
+	word-break: break-word;
+	overflow-wrap: break-word;
+}
+
+.csc-serp-preview .serp-title:hover {
+	text-decoration: underline;
+}
+
+.csc-serp-preview .serp-url {
+	color: #006621;
+	font-size: 14px;
+	margin-bottom: 5px;
+	line-height: 1.3;
+	word-wrap: break-word;
+	word-break: break-all;
+	overflow-wrap: break-word;
+}
+
+.csc-serp-preview .serp-description {
+	color: #4d5156;
+	font-size: 14px;
+	line-height: 1.58;
+	word-wrap: break-word;
+	word-break: break-word;
+	overflow-wrap: break-word;
+}
+
+/* ========================================================================
+   Controls & Statistics
+   ======================================================================== */
+
+.csc-controls {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	padding: 15px;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+}
+
+.csc-search-box {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+.csc-search-box input[type="search"] {
+	min-width: 250px;
+}
+
+.csc-stats {
+	display: flex;
+	gap: 20px;
+	align-items: center;
+}
+
+.stat-item {
+	font-size: 14px;
+	color: #646970;
+}
+
+.stat-item strong {
+	color: #2271b1;
+	font-size: 16px;
+}
+
+/* ========================================================================
+   Items List & Tables
+   ======================================================================== */
+
+.csc-items-list {
+	min-height: 300px;
+}
+
+.csc-items-list .loading-message {
+	text-align: center;
+	padding: 40px;
+	color: #646970;
+	font-size: 14px;
+}
+
+.csc-items-list table {
+	margin-top: 0;
+}
+
+.csc-items-list table th {
+	font-weight: 600;
+	background: #f6f7f7;
+}
+
+.csc-items-list table td {
+	vertical-align: middle;
+}
+
+/* ========================================================================
+   Badges
+   ======================================================================== */
+
+.csc-badge {
+	display: inline-block;
+	padding: 3px 8px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	border-radius: 3px;
+	line-height: 1.4;
+}
+
+.csc-badge.badge-custom {
+	background: #d5e5f7;
+	color: #135e96;
+}
+
+.csc-badge.badge-default {
+	background: #f0f0f1;
+	color: #646970;
+}
+
+/* ========================================================================
+   Pagination
+   ======================================================================== */
+
+.csc-pagination {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 5px;
+	margin-top: 20px;
+	padding: 15px;
+}
+
+.csc-pagination button {
+	min-width: 35px;
+	padding: 5px 10px;
+}
+
+.csc-pagination button.current {
+	background: #2271b1;
+	border-color: #2271b1;
+	color: #fff;
+	cursor: default;
+}
+
+.csc-pagination .page-info {
+	margin: 0 10px;
+	color: #646970;
+	font-size: 13px;
+}
+
+/* ========================================================================
+   Modal
+   ======================================================================== */
+
+.csc-modal {
+	position: fixed;
+	z-index: 100050;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(0, 0, 0, 0.7);
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.csc-modal-dialog {
+	position: relative;
+	width: auto;
+	max-width: 700px;
+	margin: 50px auto;
+}
+
+.csc-modal-content {
+	position: relative;
+	background: #fff;
+	border-radius: 4px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.csc-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px 24px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.csc-modal-header h2 {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.csc-modal-close {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	background: transparent;
+	border: none;
+	border-radius: 2px;
+	cursor: pointer;
+	transition: background-color 0.15s ease-in-out;
+}
+
+.csc-modal-close:hover {
+	background: #f0f0f1;
+}
+
+.csc-modal-close .dashicons {
+	width: 20px;
+	height: 20px;
+	font-size: 20px;
+	color: #646970;
+}
+
+.csc-modal-body {
+	padding: 20px 24px;
+	max-height: calc(100vh - 250px);
+	overflow-y: auto;
+}
+
+.modal-info {
+	margin-bottom: 20px;
+	padding: 12px 16px;
+	background: #f6f7f7;
+	border-left: 4px solid #2271b1;
+	border-radius: 2px;
+}
+
+.modal-info p {
+	margin: 0;
+	font-size: 14px;
+	color: #1d2327;
+}
+
+.modal-field {
+	margin-bottom: 20px;
+}
+
+.modal-field label {
+	display: block;
+	margin-bottom: 8px;
+	font-weight: 600;
+	font-size: 14px;
+	color: #1d2327;
+}
+
+.modal-field input[type="text"],
+.modal-field textarea {
+	width: 100%;
+}
+
+.modal-field .description {
+	margin-top: 8px;
+	margin-bottom: 0;
+	font-size: 13px;
+	color: #646970;
+}
+
+.modal-preview {
+	margin-top: 25px;
+	padding-top: 20px;
+	border-top: 1px solid #dcdcde;
+}
+
+.modal-preview h3 {
+	margin-top: 0;
+	margin-bottom: 15px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.csc-modal-footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 10px;
+	padding: 15px 24px;
+	border-top: 1px solid #dcdcde;
+	background: #f6f7f7;
+	border-radius: 0 0 4px 4px;
+}
+
+.csc-modal-footer button {
+	margin: 0 !important;
+}
+
+/* ========================================================================
+   Loading Overlay
+   ======================================================================== */
+
+.csc-loading-overlay {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(255, 255, 255, 0.8);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+
+.csc-loading-overlay .spinner {
+	float: none;
+	margin: 0;
+}
+
+/* ========================================================================
+   Responsive Design
+   ======================================================================== */
+
+@media screen and (max-width: 782px) {
+	.csc-admin-wrap {
+		margin-right: 0;
+	}
+
+	.csc-controls {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 15px;
+	}
+
+	.csc-search-box {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.csc-search-box input[type="search"] {
+		min-width: 100%;
+	}
+
+	.csc-stats {
+		justify-content: space-between;
+		flex-wrap: wrap;
+	}
+
+	.csc-modal-dialog {
+		margin: 10px;
+		max-width: calc(100% - 20px);
+	}
+
+	.csc-modal-body {
+		max-height: calc(100vh - 200px);
+	}
+
+	.csc-modal-footer {
+		flex-wrap: wrap;
+	}
+
+	.csc-form .form-table th,
+	.csc-form .form-table td {
+		display: block;
+		width: 100%;
+		padding: 10px 0;
+	}
+
+	.csc-form .form-table th {
+		border-bottom: none;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.csc-tab-nav .nav-tab {
+		font-size: 12px;
+		padding: 8px 12px;
+	}
+
+	.csc-tab-nav .nav-tab .dashicons {
+		font-size: 14px;
+		width: 14px;
+		height: 14px;
+	}
+
+	.csc-card {
+		padding: 15px;
+	}
+
+	.csc-modal-header,
+	.csc-modal-body,
+	.csc-modal-footer {
+		padding: 15px;
+	}
+}
+
+/* ========================================================================
+   Accessibility
+   ======================================================================== */
+
+.csc-modal:focus {
+	outline: none;
+}
+
+.csc-modal-close:focus {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+button:focus {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+/* ========================================================================
+   Utilities
+   ======================================================================== */
+
+.csc-text-center {
+	text-align: center;
+}
+
+.csc-mt-0 {
+	margin-top: 0 !important;
+}
+
+.csc-mb-0 {
+	margin-bottom: 0 !important;
+}
+
+.csc-hidden {
+	display: none !important;
+}
+
+/* ========================================================================
+   WordPress Core Overrides (if needed)
+   ======================================================================== */
+
+.csc-admin-wrap .widefat {
+	border: 1px solid #c3c4c7;
+}
+
+.csc-admin-wrap .widefat thead th,
+.csc-admin-wrap .widefat tfoot th {
+	border-bottom: 1px solid #c3c4c7;
+}
+
+.csc-admin-wrap .button-large {
+	height: auto;
+	line-height: 1;
+	padding: 10px 20px;
+	font-size: 14px;
+}

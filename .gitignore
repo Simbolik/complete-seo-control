@@ -1,0 +1,39 @@
+# WordPress
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Composer
+vendor/
+
+# Build files
+*.zip
+build/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Log files
+*.log
+
+# Environment
+.env
+.env.local
