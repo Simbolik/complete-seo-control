@@ -125,6 +125,7 @@
 					$('#meta-description').val(settings.meta_description);
 					$('#h1-text').val(settings.h1_text);
 					$('#enable-canonical').prop('checked', settings.enable_canonical == '1');
+					$('#remove-category-base').prop('checked', settings.remove_category_base == '1');
 					
 					updateHomepagePreview();
 					updateTitleCharCount();
@@ -147,7 +148,8 @@
 				page_title: $('#page-title').val(),
 				meta_description: $('#meta-description').val(),
 				h1_text: $('#h1-text').val(),
-				enable_canonical: $('#enable-canonical').is(':checked') ? '1' : '0'
+				enable_canonical: $('#enable-canonical').is(':checked') ? '1' : '0',
+				remove_category_base: $('#remove-category-base').is(':checked') ? '1' : '0'
 			},
 			success: function(response) {
 				if (response.success) {

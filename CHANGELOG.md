@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🎯 Initial release of Complete SEO Control plugin
 - 🏠 Homepage SEO settings (title, meta description, H1 tag)
 - 🔗 Canonical URL control with user toggle (homepage, categories, tags, archives)
+- 🎯 Category URL optimization - remove /category/ prefix from category URLs
+  - Makes URLs more SEO-friendly (e.g., yoursite.com/news/ instead of yoursite.com/category/news/)
+  - Automatic 301 redirects from old URLs to new URLs when enabled
+  - Automatic 301 redirects from new URLs to old URLs when disabled
+  - Prevents duplicate content issues with proper redirect handling
+  - Requires "Post name" permalink structure for optimal functionality
 - 📝 Articles (Posts) tab with comprehensive SEO management
   - 📑 Pagination support (20 items per page)
   - 🔍 Search functionality

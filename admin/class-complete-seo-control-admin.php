@@ -177,6 +177,11 @@ class Complete_SEO_Control_Admin {
 			$sanitized['enable_canonical'] = ( $input['enable_canonical'] === '1' ) ? '1' : '0';
 		}
 
+		// Sanitize remove category base setting
+		if ( isset( $input['remove_category_base'] ) ) {
+			$sanitized['remove_category_base'] = ( $input['remove_category_base'] === '1' ) ? '1' : '0';
+		}
+
 		return $sanitized;
 	}
 
@@ -204,11 +209,12 @@ class Complete_SEO_Control_Admin {
 	 * @return   array    Default settings.
 	 */
 	private function get_default_homepage_settings() {
-		return array(
-			'page_title'       => get_bloginfo( 'name' ) . ' - ' . get_bloginfo( 'description' ),
-			'meta_description' => get_bloginfo( 'description' ),
-			'h1_text'          => get_bloginfo( 'name' ),
-			'enable_canonical' => '0', // Disabled by default.
+	return array(
+			'page_title'           => get_bloginfo( 'name' ) . ' - ' . get_bloginfo( 'description' ),
+			'meta_description'     => get_bloginfo( 'description' ),
+			'h1_text'              => get_bloginfo( 'name' ),
+			'enable_canonical'     => '0', // Disabled by default.
+			'remove_category_base' => '0', // Disabled by default.
 		);
 	}
 
@@ -244,21 +250,33 @@ class Complete_SEO_Control_Admin {
 			wp_send_json_error( __( 'Insufficient permissions.', 'complete-seo-control' ) );
 		}
 
-		$page_title       = isset( $_POST['page_title'] ) ? sanitize_text_field( wp_unslash( $_POST['page_title'] ) ) : '';
-		$meta_description = isset( $_POST['meta_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['meta_description'] ) ) : '';
-		$h1_text          = isset( $_POST['h1_text'] ) ? sanitize_text_field( wp_unslash( $_POST['h1_text'] ) ) : '';
-		// Get the canonical setting - it's sent as '1' or '0' from JavaScript
-		$enable_canonical = isset( $_POST['enable_canonical'] ) && $_POST['enable_canonical'] === '1' ? '1' : '0';
+	$page_title           = isset( $_POST['page_title'] ) ? sanitize_text_field( wp_unslash( $_POST['page_title'] ) ) : '';
+	$meta_description     = isset( $_POST['meta_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['meta_description'] ) ) : '';
+	$h1_text              = isset( $_POST['h1_text'] ) ? sanitize_text_field( wp_unslash( $_POST['h1_text'] ) ) : '';
+	// Get the canonical setting - it's sent as '1' or '0' from JavaScript
+	$enable_canonical     = isset( $_POST['enable_canonical'] ) && $_POST['enable_canonical'] === '1' ? '1' : '0';
+	$remove_category_base = isset( $_POST['remove_category_base'] ) && $_POST['remove_category_base'] === '1' ? '1' : '0';
 
-		$settings = array(
-			'page_title'       => $page_title,
-			'meta_description' => $meta_description,
-			'h1_text'          => $h1_text,
-			'enable_canonical' => $enable_canonical,
-			'updated_at'       => time(),
-		);
+	// Check if category base setting changed
+	$old_settings = get_option( 'complete_seo_control_homepage', array() );
+	$old_remove_category_base = isset( $old_settings['remove_category_base'] ) ? $old_settings['remove_category_base'] : '0';
+	$category_base_changed = ( $old_remove_category_base !== $remove_category_base );
 
-		update_option( 'complete_seo_control_homepage', $settings );
+	$settings = array(
+		'page_title'           => $page_title,
+		'meta_description'     => $meta_description,
+		'h1_text'              => $h1_text,
+		'enable_canonical'     => $enable_canonical,
+		'remove_category_base' => $remove_category_base,
+		'updated_at'           => time(),
+	);
+
+	update_option( 'complete_seo_control_homepage', $settings );
+
+	// Flush rewrite rules if category base setting changed
+	if ( $category_base_changed ) {
+		flush_rewrite_rules();
+	}
 
 		// Clear all caches to ensure canonical URL changes take effect immediately.
 		if ( function_exists( 'wp_cache_flush' ) ) {
@@ -279,12 +297,17 @@ class Complete_SEO_Control_Admin {
 			\LiteSpeed_Cache_API::purge_all();
 		}
 
-		wp_send_json_success(
-			array(
-				'message'  => __( 'Settings saved successfully.', 'complete-seo-control' ),
-				'settings' => $settings,
-			)
-		);
+	$message = __( 'Settings saved successfully.', 'complete-seo-control' );
+	if ( $category_base_changed ) {
+		$message .= ' ' . __( 'Permalink rules have been flushed. Category URLs have been updated.', 'complete-seo-control' );
+	}
+
+	wp_send_json_success(
+		array(
+			'message'  => $message,
+			'settings' => $settings,
+		)
+	);
 	}
 
 	/**

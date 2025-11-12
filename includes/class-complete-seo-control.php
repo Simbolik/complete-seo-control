@@ -73,6 +73,9 @@ class Complete_SEO_Control {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		
+		// Hook category base removal into init
+		add_action( 'init', array( $this, 'maybe_remove_category_base' ), 999 );
 	}
 
 	/**
@@ -202,6 +205,184 @@ class Complete_SEO_Control {
 		
 		// Filter the post title (for classic themes using the_title()).
 		$this->loader->add_filter( 'the_title', $plugin_public, 'filter_the_title', 10 );
+	}
+
+	/**
+	 * Remove category base from URLs if enabled.
+	 *
+	 * @since    1.0.0
+	 */
+	public function maybe_remove_category_base() {
+		$settings = get_option( 'complete_seo_control_homepage', array() );
+		$remove_category_base = isset( $settings['remove_category_base'] ) && $settings['remove_category_base'] === '1';
+
+		if ( $remove_category_base ) {
+			// Remove category base from URLs
+			add_filter( 'category_rewrite_rules', array( $this, 'remove_category_base_rewrite_rules' ) );
+			add_filter( 'category_link', array( $this, 'remove_category_base_from_link' ), 10, 2 );
+			
+			// Handle category query when /category/ is removed
+			add_filter( 'request', array( $this, 'handle_category_request' ) );
+			
+			// Add 301 redirect from old URLs to new ones
+			add_action( 'template_redirect', array( $this, 'redirect_old_category_urls' ), 1 );
+		} else {
+			// When disabled, catch URLs without /category/ and redirect them
+			add_action( 'parse_request', array( $this, 'catch_and_redirect_to_category_base' ), 1 );
+		}
+	}
+
+	/**
+	 * Modify rewrite rules to remove category base.
+	 *
+	 * @since    1.0.0
+	 * @param    array $rules    The existing rewrite rules.
+	 * @return   array           Modified rewrite rules.
+	 */
+	public function remove_category_base_rewrite_rules( $rules ) {
+		$categories = get_categories( array( 'hide_empty' => false ) );
+		$new_rules  = array();
+
+		foreach ( $categories as $category ) {
+			$category_nicename = $category->slug;
+			$new_rules[ '(' . $category_nicename . ')/(?:feed/)?(feed|rdf|rss|rss2|atom)/?$' ] = 'index.php?category_name=$matches[1]&feed=$matches[2]';
+			$new_rules[ '(' . $category_nicename . ')/page/?([0-9]{1,})/?$' ] = 'index.php?category_name=$matches[1]&paged=$matches[2]';
+			$new_rules[ '(' . $category_nicename . ')/?$' ] = 'index.php?category_name=$matches[1]';
+		}
+
+		return $new_rules + $rules;
+	}
+
+	/**
+	 * Remove /category/ from category links.
+	 *
+	 * @since    1.0.0
+	 * @param    string $link        The category link.
+	 * @param    int    $category_id The category ID.
+	 * @return   string              Modified link.
+	 */
+	public function remove_category_base_from_link( $link, $category_id ) {
+		$category_base = get_option( 'category_base', 'category' );
+		if ( empty( $category_base ) ) {
+			$category_base = 'category';
+		}
+		
+		// Remove the category base from the URL
+		$link = preg_replace( '/' . preg_quote( $category_base, '/' ) . '\//i', '', $link, 1 );
+		
+		return $link;
+	}
+
+	/**
+	 * Handle category requests when base is removed.
+	 *
+	 * @since    1.0.0
+	 * @param    array $query_vars The query variables.
+	 * @return   array             Modified query variables.
+	 */
+	public function handle_category_request( $query_vars ) {
+		if ( isset( $query_vars['category_name'] ) ) {
+			return $query_vars;
+		}
+
+		if ( isset( $query_vars['name'] ) ) {
+			$category = get_category_by_slug( $query_vars['name'] );
+			if ( $category ) {
+				unset( $query_vars['name'] );
+				$query_vars['category_name'] = $category->slug;
+			}
+		}
+
+		return $query_vars;
+	}
+
+	/**
+	 * Redirect old category URLs with /category/ to new URLs without it.
+	 *
+	 * @since    1.0.0
+	 */
+	public function redirect_old_category_urls() {
+		// Only redirect on category archives
+		if ( ! is_category() ) {
+			return;
+		}
+
+		$category_base = get_option( 'category_base', 'category' );
+		if ( empty( $category_base ) ) {
+			$category_base = 'category';
+		}
+
+		// Get the current URL
+		$current_url = home_url( add_query_arg( array(), $_SERVER['REQUEST_URI'] ) );
+		
+		// Check if the URL contains /category/
+		if ( strpos( $_SERVER['REQUEST_URI'], '/' . $category_base . '/' ) !== false ) {
+			// Get the category object
+			$category = get_queried_object();
+			
+			if ( $category && isset( $category->term_id ) ) {
+				// Get the new URL without /category/
+				$new_url = get_term_link( $category );
+				
+				if ( ! is_wp_error( $new_url ) && $current_url !== $new_url ) {
+					// Perform 301 redirect
+					wp_redirect( $new_url, 301 );
+					exit;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Catch and redirect category URLs without /category/ back to URLs with it (when feature is disabled).
+	 *
+	 * @since    1.0.0
+	 * @param    object $wp The WordPress object.
+	 */
+	public function catch_and_redirect_to_category_base( $wp ) {
+		$category_base = get_option( 'category_base', 'category' );
+		if ( empty( $category_base ) ) {
+			$category_base = 'category';
+		}
+
+		// Check if the URL does NOT contain /category/
+		if ( strpos( $_SERVER['REQUEST_URI'], '/' . $category_base . '/' ) !== false ) {
+			return; // Already has /category/, no redirect needed
+		}
+
+		// Parse the request URI to get potential category slug
+		$request_uri = trim( $_SERVER['REQUEST_URI'], '/' );
+		$uri_parts = explode( '/', $request_uri );
+		
+		if ( empty( $uri_parts[0] ) ) {
+			return;
+		}
+
+		// Check if the first part is a category slug
+		$potential_category_slug = $uri_parts[0];
+		$category = get_category_by_slug( $potential_category_slug );
+		
+		if ( $category ) {
+			// This is a category! Redirect to the proper URL with /category/
+			$redirect_url = home_url( '/' . $category_base . '/' . $category->slug . '/' );
+			
+			// Handle pagination
+			if ( isset( $uri_parts[1] ) && $uri_parts[1] === 'page' && isset( $uri_parts[2] ) ) {
+				$paged = intval( $uri_parts[2] );
+				if ( $paged > 1 ) {
+					$redirect_url = home_url( '/' . $category_base . '/' . $category->slug . '/page/' . $paged . '/' );
+				}
+			}
+			
+			// Handle feeds
+			if ( isset( $uri_parts[1] ) && in_array( $uri_parts[1], array( 'feed', 'rdf', 'rss', 'rss2', 'atom' ) ) ) {
+				$redirect_url = home_url( '/' . $category_base . '/' . $category->slug . '/' . $uri_parts[1] . '/' );
+			}
+			
+			// Perform 301 redirect
+			wp_redirect( $redirect_url, 301 );
+			exit;
+		}
 	}
 
 	/**

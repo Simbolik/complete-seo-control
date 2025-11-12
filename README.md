@@ -48,6 +48,7 @@
 - **📁 Category Archives** - Custom meta tags, descriptions, and H1 headings for categories
 - **🏷️ Tag Archives** - Complete SEO control for tag pages with custom titles, descriptions, and H1
 - **🔗 Canonical URLs** - Control canonical URL output (optional, user-toggleable)
+- **🎯 Category URL Optimization** - Remove /category/ base from URLs with automatic 301 redirects
 
 ### 🎨 User Experience
 - **👁️ Live SERP Preview** - Real-time Google search result preview as you type
@@ -62,7 +63,8 @@
 - **🎯 WordPress Standards** - Follows official WordPress coding standards
 - **🌍 Translation Ready** - Full internationalization support
 - **🧹 Clean Uninstall** - Removes all data when uninstalled
-- **⚙️ Theme Compatible** - Works with any properly coded WordPress theme
+- **⚙️ Theme Compatible** - Works with any properly coded theme
+- **🔄 SEO-Safe Redirects** - Automatic 301 redirects prevent duplicate content
 
 ## 📦 Requirements
 
@@ -115,7 +117,8 @@ wp plugin activate complete-seo-control
 3. Write a compelling **Meta Description** (150-160 characters)
 4. Optionally customize your **H1 Heading**
 5. Toggle **Canonical URLs** on/off as needed
-6. Click **Save Settings**
+6. Enable **Category URL** optimization to remove /category/ from URLs (requires Post name permalinks)
+7. Click **Save Settings**
 
 ### Step 2: Optimize Your Content
 1. Navigate to **Articles**, **Categories**, **Tags**, or **Pages** tab
@@ -178,7 +181,7 @@ complete-seo-control/
 
 | Table | Meta Key | Description |
 |-------|----------|-------------|
-| **wp_options** | `complete_seo_control_homepage` | Homepage settings (serialized) |
+| **wp_options** | `complete_seo_control_homepage` | Homepage settings (title, description, H1, canonical, category URL) |
 | | `complete_seo_control_version` | Plugin version |
 | | `complete_seo_control_activated` | Activation timestamp |
 | **wp_postmeta** | `_csc_post_seo` | Article SEO data |

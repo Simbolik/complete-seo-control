@@ -132,6 +132,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 									</fieldset>
 								</td>
 							</tr>
+							<tr>
+								<th scope="row">
+									<?php esc_html_e( 'Category URL', 'complete-seo-control' ); ?>
+								</th>
+								<td>
+									<fieldset>
+										<label for="remove-category-base">
+											<input type="checkbox" id="remove-category-base" name="remove_category_base" value="1" />
+											<?php esc_html_e( 'Remove /category/ from category URLs', 'complete-seo-control' ); ?>
+										</label>
+										<p class="description">
+											<?php esc_html_e( 'Makes category URLs more SEO-friendly by removing the default /category/ prefix.', 'complete-seo-control' ); ?><br>
+											<?php esc_html_e( 'Example: yoursite.com/uncategorized/ instead of yoursite.com/category/uncategorized/.', 'complete-seo-control' ); ?><br><br>
+											<span style="color: #dc3232; font-weight: 600;"><?php esc_html_e( 'Note: After enabling/disabling this, visit Settings → Permalinks to flush rewrite rules.', 'complete-seo-control' ); ?></span><br>
+											<?php esc_html_e( 'This feature requires "Post name" permalink structure (Settings → Permalinks). This is the most SEO-friendly structure.', 'complete-seo-control' ); ?><br><br>
+											<?php esc_html_e( 'Old URLs with /category/ will automatically redirect (301) to new URLs to prevent duplicate content.', 'complete-seo-control' ); ?>
+										</p>
+									</fieldset>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 

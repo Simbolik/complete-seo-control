@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Complete SEO Control
  * Plugin URI:        https://wordpress.org/plugins/complete-seo-control/
- * Description:       Comprehensive SEO management for WordPress. Control meta titles, descriptions, and H1 tags for your homepage, articles, categories, tags, and pages with live previews and pagination.
+ * Description:       Comprehensive SEO management for WordPress. Control meta titles, descriptions, H1 tags, and category URLs for your homepage, articles, categories, tags, and pages with live previews and pagination.
  * Version:           1.0.0
  * Requires at least: 5.8
  * Requires PHP:      7.4

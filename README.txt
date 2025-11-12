@@ -21,6 +21,7 @@ Complete control over SEO meta tags for your WordPress site with an intuitive in
 * **Pages Management** - Optimize SEO for all your WordPress pages
 * **Categories Management** - Define custom meta tags, descriptions, and H1 headings for category archives
 * **Tags Management** - Complete SEO control for tag pages with custom titles, descriptions, and H1 headings
+* **Category URL Optimization** - Remove /category/ from URLs with automatic 301 redirects to prevent duplicate content
 * **Live SERP Preview** - See how your content will appear in Google search results in real-time
 * **Character Counter** - Stay within recommended limits with visual feedback (green/yellow/red indicators)
 * **Bulk Overview** - See at a glance which content has custom SEO vs. default settings
@@ -142,6 +143,8 @@ Yes! Complete SEO Control is fully internationalization-ready and can be transla
 * Pages SEO management with search and pagination (20 per page)
 * Categories SEO management with custom titles, descriptions, and H1 headings
 * Tags SEO management with custom titles, descriptions, and H1 headings
+* Category URL optimization - remove /category/ from URLs for better SEO
+* Automatic 301 redirects (bidirectional) to prevent duplicate content
 * Pagination and search for Categories and Tags tabs
 * Live SERP preview with real-time updates
 * Character counter with color-coded visual feedback
