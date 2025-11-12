@@ -88,13 +88,22 @@ class Complete_SEO_Control_Public {
 			if ( ! empty( $page_seo['description'] ) ) {
 				$description = $page_seo['description'];
 			}
-		} elseif ( is_category() ) {
+	} elseif ( is_category() ) {
 			// Category SEO.
 			$category = get_queried_object();
 			if ( $category ) {
 				$category_seo = get_term_meta( $category->term_id, '_csc_category_seo', true );
 				if ( ! empty( $category_seo['description'] ) ) {
 					$description = $category_seo['description'];
+				}
+			}
+		} elseif ( is_tag() ) {
+			// Tag SEO.
+			$tag = get_queried_object();
+			if ( $tag ) {
+				$tag_seo = get_term_meta( $tag->term_id, '_csc_tag_seo', true );
+				if ( ! empty( $tag_seo['description'] ) ) {
+					$description = $tag_seo['description'];
 				}
 			}
 		}
@@ -133,7 +142,7 @@ class Complete_SEO_Control_Public {
 			if ( ! empty( $page_seo['title'] ) ) {
 				$custom_title = $page_seo['title'];
 			}
-		} elseif ( is_category() ) {
+	} elseif ( is_category() ) {
 			$category = get_queried_object();
 			if ( $category ) {
 				$category_seo = get_term_meta( $category->term_id, '_csc_category_seo', true );
@@ -141,14 +150,25 @@ class Complete_SEO_Control_Public {
 					$custom_title = $category_seo['title'];
 				}
 			}
+		} elseif ( is_tag() ) {
+			$tag = get_queried_object();
+			if ( $tag ) {
+				$tag_seo = get_term_meta( $tag->term_id, '_csc_tag_seo', true );
+				if ( ! empty( $tag_seo['title'] ) ) {
+					$custom_title = $tag_seo['title'];
+				}
+			}
 		}
 		
-		// If we have a custom title, replace the title part.
-		if ( ! empty( $custom_title ) ) {
-			$title['title'] = $custom_title;
-		}
-		
-		return $title;
+	// If we have a custom title, replace the entire title output.
+	// Remove all other parts (site, tagline) to show ONLY the custom title.
+	if ( ! empty( $custom_title ) ) {
+		return array(
+			'title' => $custom_title,
+		);
+	}
+	
+	return $title;
 	}
 
 	/**
@@ -161,8 +181,8 @@ class Complete_SEO_Control_Public {
 	 * @return   string                 Filtered block content.
 	 */
 	public function filter_heading_block( $block_content, $block ) {
-		// Only on homepage.
-		if ( ! is_front_page() && ! is_home() ) {
+		// Only on homepage, category pages, or tag pages.
+		if ( ! is_front_page() && ! is_home() && ! is_category() && ! is_tag() ) {
 			return $block_content;
 		}
 		
@@ -187,13 +207,39 @@ class Complete_SEO_Control_Public {
 			return $block_content;
 		}
 		
-		// Get custom H1 text.
-		$homepage_settings = get_option( 'complete_seo_control_homepage', array() );
-		if ( empty( $homepage_settings['h1_text'] ) ) {
-			return $block_content;
+		// Get custom H1 text based on page type.
+		$custom_h1 = '';
+		
+		if ( is_front_page() || is_home() ) {
+			// Homepage H1.
+			$homepage_settings = get_option( 'complete_seo_control_homepage', array() );
+			if ( ! empty( $homepage_settings['h1_text'] ) ) {
+				$custom_h1 = $homepage_settings['h1_text'];
+			}
+		} elseif ( is_category() ) {
+			// Category H1.
+			$category = get_queried_object();
+			if ( $category ) {
+				$category_seo = get_term_meta( $category->term_id, '_csc_category_seo', true );
+				if ( ! empty( $category_seo['h1_text'] ) ) {
+					$custom_h1 = $category_seo['h1_text'];
+				}
+			}
+		} elseif ( is_tag() ) {
+			// Tag H1.
+			$tag = get_queried_object();
+			if ( $tag ) {
+				$tag_seo = get_term_meta( $tag->term_id, '_csc_tag_seo', true );
+				if ( ! empty( $tag_seo['h1_text'] ) ) {
+					$custom_h1 = $tag_seo['h1_text'];
+				}
+			}
 		}
 		
-		$custom_h1 = $homepage_settings['h1_text'];
+		// If no custom H1, return unchanged.
+		if ( empty( $custom_h1 ) ) {
+			return $block_content;
+		}
 		
 		// Replace H1 content ONLY - preserves all attributes.
 		$block_content = preg_replace(
@@ -210,30 +256,66 @@ class Complete_SEO_Control_Public {
 	}
 
 	/**
-	 * Filter the archive title (used by some block themes for H1).
-	 * DISABLED: This was causing unintended side effects.
-	 * H1 replacement is handled by filter_heading_block() instead.
+	 * Filter the archive title (used by some themes for H1 on category pages).
 	 *
 	 * @since    1.0.0
 	 * @param    string $title    The archive title.
 	 * @return   string           The filtered title.
 	 */
 	public function filter_archive_title( $title ) {
-		// Return title unchanged to prevent side effects.
+		// Only filter on category or tag pages.
+		if ( ! is_category() && ! is_tag() ) {
+			return $title;
+		}
+		
+		// Get term custom H1.
+		$term = get_queried_object();
+		if ( ! $term ) {
+			return $title;
+		}
+		
+		if ( is_category() ) {
+			$seo_data = get_term_meta( $term->term_id, '_csc_category_seo', true );
+		} else {
+			$seo_data = get_term_meta( $term->term_id, '_csc_tag_seo', true );
+		}
+		
+		if ( ! empty( $seo_data['h1_text'] ) ) {
+			return esc_html( $seo_data['h1_text'] );
+		}
+		
 		return $title;
 	}
 
 	/**
-	 * Filter the page title (alternative hook for some themes).
-	 * DISABLED: This was causing unintended side effects.
-	 * H1 replacement is handled by filter_heading_block() instead.
+	 * Filter the page title (used by single_cat_title() for categories).
 	 *
 	 * @since    1.0.0
 	 * @param    string $title    The page title.
 	 * @return   string           The filtered title.
 	 */
 	public function filter_page_title( $title ) {
-		// Return title unchanged to prevent side effects.
+		// Only filter on category or tag pages.
+		if ( ! is_category() && ! is_tag() ) {
+			return $title;
+		}
+		
+		// Get term custom H1.
+		$term = get_queried_object();
+		if ( ! $term ) {
+			return $title;
+		}
+		
+		if ( is_category() ) {
+			$seo_data = get_term_meta( $term->term_id, '_csc_category_seo', true );
+		} else {
+			$seo_data = get_term_meta( $term->term_id, '_csc_tag_seo', true );
+		}
+		
+		if ( ! empty( $seo_data['h1_text'] ) ) {
+			return esc_html( $seo_data['h1_text'] );
+		}
+		
 		return $title;
 	}
 
@@ -263,8 +345,8 @@ class Complete_SEO_Control_Public {
 		// Check if canonical URLs are enabled.
 		$settings = get_option( 'complete_seo_control_homepage', array() );
 		
-		// If enable_canonical is not set, default to enabled (backward compatibility).
-		$canonical_enabled = isset( $settings['enable_canonical'] ) ? $settings['enable_canonical'] : '1';
+		// If enable_canonical is not set, default to disabled.
+		$canonical_enabled = isset( $settings['enable_canonical'] ) ? $settings['enable_canonical'] : '0';
 		
 		// Only output if explicitly enabled.
 		if ( $canonical_enabled !== '1' ) {

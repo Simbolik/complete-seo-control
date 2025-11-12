@@ -46,6 +46,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="dashicons dashicons-category"></span>
 			<?php esc_html_e( 'Categories', 'complete-seo-control' ); ?>
 		</a>
+		<a href="?page=<?php echo esc_attr( $this->plugin_name ); ?>&tab=tags" 
+		   class="nav-tab <?php echo 'tags' === $active_tab ? 'nav-tab-active' : ''; ?>"
+		   data-tab="tags">
+			<span class="dashicons dashicons-tag"></span>
+			<?php esc_html_e( 'Tags', 'complete-seo-control' ); ?>
+		</a>
 		<a href="?page=<?php echo esc_attr( $this->plugin_name ); ?>&tab=pages" 
 		   class="nav-tab <?php echo 'pages' === $active_tab ? 'nav-tab-active' : ''; ?>"
 		   data-tab="pages">
@@ -193,70 +199,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 
 				<div id="categories-list" class="csc-items-list">
-					<?php
-					// Display categories list.
-					$categories = get_terms(
-						array(
-							'taxonomy'   => 'category',
-							'hide_empty' => false,
-							'orderby'    => 'name',
-							'order'      => 'ASC',
-							'number'     => 50,
-						)
-					);
-
-					if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) :
-						?>
-						<table class="wp-list-table widefat fixed striped">
-							<thead>
-								<tr>
-									<th style="width: 60px;"><?php esc_html_e( 'ID', 'complete-seo-control' ); ?></th>
-									<th><?php esc_html_e( 'Category Name', 'complete-seo-control' ); ?></th>
-									<th style="width: 100px;"><?php esc_html_e( 'Status', 'complete-seo-control' ); ?></th>
-									<th style="width: 120px;"><?php esc_html_e( 'Actions', 'complete-seo-control' ); ?></th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php foreach ( $categories as $category ) : ?>
-									<?php
-									$seo_data   = get_term_meta( $category->term_id, '_csc_category_seo', true );
-									$has_custom = ! empty( $seo_data );
-									?>
-									<tr>
-										<td><?php echo esc_html( $category->term_id ); ?></td>
-										<td>
-											<strong><?php echo esc_html( $category->name ); ?></strong>
-											<div class="row-actions">
-												<span class="view">
-													<a href="<?php echo esc_url( get_term_link( $category ) ); ?>" target="_blank">
-														<?php esc_html_e( 'View', 'complete-seo-control' ); ?>
-													</a>
-												</span>
-											</div>
-										</td>
-										<td>
-											<span class="csc-badge <?php echo $has_custom ? 'badge-custom' : 'badge-default'; ?>">
-												<?php echo $has_custom ? esc_html__( 'Custom', 'complete-seo-control' ) : esc_html__( 'Default', 'complete-seo-control' ); ?>
-											</span>
-										</td>
-										<td>
-											<button type="button" class="button button-small edit-category-seo" 
-													data-id="<?php echo esc_attr( $category->term_id ); ?>"
-													data-name="<?php echo esc_attr( $category->name ); ?>"
-													data-slug="<?php echo esc_attr( $category->slug ); ?>"
-													data-title="<?php echo $has_custom && ! empty( $seo_data['title'] ) ? esc_attr( $seo_data['title'] ) : ''; ?>"
-													data-description="<?php echo $has_custom && ! empty( $seo_data['description'] ) ? esc_attr( $seo_data['description'] ) : ''; ?>">
-												<?php esc_html_e( 'Edit SEO', 'complete-seo-control' ); ?>
-											</button>
-										</td>
-									</tr>
-								<?php endforeach; ?>
-							</tbody>
-						</table>
-					<?php else : ?>
-						<p><?php esc_html_e( 'No categories found.', 'complete-seo-control' ); ?></p>
-					<?php endif; ?>
+					<p class="loading-message"><?php esc_html_e( 'Loading categories...', 'complete-seo-control' ); ?></p>
 				</div>
+
+				<div id="categories-pagination" class="csc-pagination"></div>
+			</div>
+		</div>
+
+		<!-- Tags Tab -->
+		<div id="tags-tab" class="csc-tab-pane <?php echo 'tags' === $active_tab ? 'active' : ''; ?>">
+			<div class="csc-card">
+				<div class="csc-controls">
+					<div class="csc-search-box">
+						<input type="search" id="tag-search" placeholder="<?php esc_attr_e( 'Search tags...', 'complete-seo-control' ); ?>" />
+						<button type="button" class="button" id="tag-search-btn">
+							<?php esc_html_e( 'Search', 'complete-seo-control' ); ?>
+						</button>
+					</div>
+				</div>
+
+				<div id="tags-list" class="csc-items-list">
+					<p class="loading-message"><?php esc_html_e( 'Loading tags...', 'complete-seo-control' ); ?></p>
+				</div>
+
+				<div id="tags-pagination" class="csc-pagination"></div>
 			</div>
 		</div>
 
@@ -330,6 +296,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<strong><?php esc_html_e( 'Characters:', 'complete-seo-control' ); ?></strong> 
 								<span id="modal-char-count">0</span>
 							</span>
+						</p>
+					</div>
+
+					<div class="modal-field" id="modal-h1-field" style="display: none;">
+						<label for="modal-seo-h1"><?php esc_html_e( 'Custom H1 Heading', 'complete-seo-control' ); ?></label>
+						<input type="text" id="modal-seo-h1" class="widefat" />
+						<p class="description">
+							<?php esc_html_e( 'Leave empty to use default name as H1.', 'complete-seo-control' ); ?>
 						</p>
 					</div>
 

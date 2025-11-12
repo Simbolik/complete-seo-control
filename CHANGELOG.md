@@ -12,21 +12,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🏠 Homepage SEO settings (title, meta description, H1 tag)
 - 🔗 Canonical URL control with user toggle (homepage, categories, tags, archives)
 - 📝 Articles (Posts) tab with comprehensive SEO management
+  - 📑 Pagination support (20 items per page)
+  - 🔍 Search functionality
+  - 📊 Statistics dashboard (total articles, custom SEO count)
 - 📄 Pages tab with SEO management for WordPress pages
-- 📁 Categories tab with SEO management for category archives
+  - 📑 Pagination support (20 items per page)
+  - 🔍 Search functionality
+  - 📊 Statistics dashboard (total pages, custom SEO count)
+- 📁 Categories tab with complete SEO management
+  - 📝 Custom titles for category archives
+  - 📝 Custom meta descriptions
+  - 🎯 Custom H1 headings (works with all theme types)
+  - 📑 Pagination support (20 items per page)
+  - 🔍 Search functionality
+- 🏷️ Tags tab with complete SEO management
+  - 📝 Custom titles for tag archives
+  - 📝 Custom meta descriptions
+  - 🎯 Custom H1 headings (works with all theme types)
+  - 📑 Pagination support (20 items per page)
+  - 🔍 Search functionality
 - 👁️ Live SERP preview showing Google search appearance
 - 📊 Character counter with color-coded feedback (blue/yellow/red for title and description)
 - ⚠️ Real-time validation warnings in preview window
-- 🔍 Search functionality for Articles and Pages
-- 📑 Pagination for managing large content libraries
-- 📊 Statistics dashboard (total items, custom SEO count)
-- ⚡ AJAX-powered interface for smooth UX
+- ⚡ AJAX-powered interface for smooth UX (no page reloads)
 - 📝 Modal dialog for editing SEO with live preview
-- 🔗 View links for quick access to posts, pages, and categories
+- 🔗 View links for quick access to posts, pages, categories, and tags
 - 🎯 WordPress native styling and UI components
 - 🔒 Security: nonce verification, capability checks
-- 🧹 Data sanitization and validation for all inputs
-- 🧹 Clean uninstall process (removes all data)
+- 🧼 Data sanitization and validation for all inputs
+- 🧼 Clean uninstall process (removes all data including term meta)
 - 🌍 Internationalization support (translation-ready)
 - 📱 Responsive design for mobile and tablet
 - ♿ Accessibility features (WCAG compliant)

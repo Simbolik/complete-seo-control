@@ -12,18 +12,20 @@ Complete control over SEO meta tags for your WordPress site with an intuitive in
 
 == Description ==
 
-**Complete SEO Control** is a powerful yet user-friendly WordPress plugin that gives you complete control over your site's SEO meta tags. Manage page titles, meta descriptions, and H1 tags for your homepage, posts, pages, and categories—all from a single, intuitive interface.
+**Complete SEO Control** is a powerful yet user-friendly WordPress plugin that gives you complete control over your site's SEO meta tags. Manage page titles, meta descriptions, and H1 tags for your homepage, posts, pages, categories, and tags—all from a single, intuitive 5-tab interface.
 
 = Key Features =
 
 * **Homepage Settings** - Customize page title, meta description, and H1 tag for your homepage
 * **Articles Management** - Set custom SEO titles and descriptions for individual blog posts
 * **Pages Management** - Optimize SEO for all your WordPress pages
-* **Categories Management** - Define custom meta tags for category archive pages
+* **Categories Management** - Define custom meta tags, descriptions, and H1 headings for category archives
+* **Tags Management** - Complete SEO control for tag pages with custom titles, descriptions, and H1 headings
 * **Live SERP Preview** - See how your content will appear in Google search results in real-time
 * **Character Counter** - Stay within recommended limits with visual feedback (green/yellow/red indicators)
 * **Bulk Overview** - See at a glance which content has custom SEO vs. default settings
-* **Search & Pagination** - Easily find and manage content with built-in search and pagination
+* **Search & Pagination** - Easily find and manage content with built-in search and pagination (20 items per page)
+* **Canonical URLs** - Control canonical URL output for homepage, categories, tags, and archives
 * **WordPress Standards** - Built following WordPress coding standards and best practices
 * **Clean Uninstall** - Removes all data cleanly when uninstalled
 
@@ -38,7 +40,7 @@ Complete control over SEO meta tags for your WordPress site with an intuitive in
 
 1. Install and activate the plugin
 2. Go to **SEO Control** in your WordPress admin menu
-3. Start customizing your meta tags using the four intuitive tabs
+3. Start customizing your meta tags using the five intuitive tabs (Homepage, Articles, Categories, Tags, Pages)
 4. See live previews as you type
 5. Save and watch your search visibility improve!
 
@@ -58,7 +60,6 @@ We're planning exciting premium features including:
 * Schema.org structured data
 * XML sitemap generation
 * Advanced redirect management
-* Canonical URL control
 * And much more!
 
 == Installation ==
@@ -82,7 +83,8 @@ We're planning exciting premium features including:
 
 1. Navigate to **SEO Control** in your WordPress admin menu
 2. Start with the **Homepage** tab to set your site's main SEO settings
-3. Use the other tabs to optimize individual posts, pages, and categories
+3. Use the **Articles**, **Categories**, **Tags**, and **Pages** tabs to optimize individual content
+4. All taxonomy tabs (Categories and Tags) include pagination and search for easy management
 
 == Frequently Asked Questions ==
 
@@ -104,7 +106,11 @@ No. Your data remains in the database if you deactivate the plugin. However, if 
 
 = How do I add custom SEO to a new post or page? =
 
-Simply create your post/page, then go to the SEO Control plugin, navigate to the Articles or Pages tab, search for your content, and click "Edit SEO" to customize.
+Simply create your post/page, then go to the SEO Control plugin, navigate to the Articles or Pages tab, use the search box or pagination to find your content, and click "Edit SEO" to customize.
+
+= Can I customize H1 headings for categories and tags? =
+
+Yes! The Categories and Tags tabs allow you to customize the title, meta description, and H1 heading for each category or tag.
 
 = What happens if I don't set custom SEO? =
 
@@ -121,25 +127,28 @@ Yes! Complete SEO Control is fully internationalization-ready and can be transla
 == Screenshots ==
 
 1. Homepage tab - Set page title, meta description, and H1 tag with live SERP preview
-2. Articles tab - Manage SEO for all your blog posts with search and pagination
-3. Categories tab - Customize meta tags for category archives
-4. Pages tab - Optimize individual pages for search engines
-5. Edit modal - User-friendly interface with live preview and character counter
+2. Articles tab - Manage SEO for all your blog posts with search and pagination (20 per page)
+3. Categories tab - Customize meta tags, descriptions, and H1 headings with pagination and search
+4. Tags tab - Full SEO control for tag pages with custom titles, descriptions, and H1 headings
+5. Pages tab - Optimize individual pages for search engines with pagination (20 per page)
+6. Edit modal - User-friendly interface with live preview and character counter
 
 == Changelog ==
 
 = 1.0.0 =
 * Initial release
-* Homepage SEO settings management
-* Articles (posts) SEO management with search and pagination
-* Pages SEO management with search and pagination
-* Categories SEO management
-* Live SERP preview
-* Character counter with visual feedback
-* Statistics dashboard
-* Clean, WordPress-standard admin interface
-* Secure with nonce verification
-* Full uninstall cleanup
+* Homepage SEO settings management (title, description, H1, canonical URLs)
+* Articles (posts) SEO management with search and pagination (20 per page)
+* Pages SEO management with search and pagination (20 per page)
+* Categories SEO management with custom titles, descriptions, and H1 headings
+* Tags SEO management with custom titles, descriptions, and H1 headings
+* Pagination and search for Categories and Tags tabs
+* Live SERP preview with real-time updates
+* Character counter with color-coded visual feedback
+* Statistics dashboard (Articles and Pages tabs)
+* Clean, WordPress-standard admin interface with 5 organized tabs
+* Secure with nonce verification and capability checks
+* Full uninstall cleanup (removes all plugin data)
 
 == Upgrade Notice ==
 

@@ -40,8 +40,10 @@ $wpdb->query( "DELETE FROM $wpdb->postmeta WHERE meta_key IN ('_csc_post_seo', '
  * Meta keys:
  * - _csc_category_seo
  * - _csc_category_seo_updated
+ * - _csc_tag_seo
+ * - _csc_tag_seo_updated
  */
-$wpdb->query( "DELETE FROM $wpdb->termmeta WHERE meta_key IN ('_csc_category_seo', '_csc_category_seo_updated')" );
+$wpdb->query( "DELETE FROM $wpdb->termmeta WHERE meta_key IN ('_csc_category_seo', '_csc_category_seo_updated', '_csc_tag_seo', '_csc_tag_seo_updated')" );
 
 /**
  * Clear any cached data

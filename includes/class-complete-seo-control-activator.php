@@ -44,7 +44,7 @@ class Complete_SEO_Control_Activator {
 			'page_title'       => get_bloginfo( 'name' ) . ' - ' . get_bloginfo( 'description' ),
 			'meta_description' => get_bloginfo( 'description' ),
 			'h1_text'          => '', // Empty by default - no changes unless user sets it.
-			'enable_canonical' => '1', // Enabled by default.
+			'enable_canonical' => '0', // Disabled by default - let user choose.
 		);
 
 		// Merge with existing settings to preserve user data and add missing keys.

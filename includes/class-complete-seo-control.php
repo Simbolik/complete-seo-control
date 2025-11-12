@@ -160,7 +160,12 @@ class Complete_SEO_Control {
 		$this->loader->add_action( 'wp_ajax_csc_save_page_seo', $plugin_admin, 'ajax_save_page_seo' );
 
 		// AJAX hooks for categories.
+		$this->loader->add_action( 'wp_ajax_csc_get_categories_data', $plugin_admin, 'ajax_get_categories_data' );
 		$this->loader->add_action( 'wp_ajax_csc_save_category_seo', $plugin_admin, 'ajax_save_category_seo' );
+
+		// AJAX hooks for tags.
+		$this->loader->add_action( 'wp_ajax_csc_get_tags_data', $plugin_admin, 'ajax_get_tags_data' );
+		$this->loader->add_action( 'wp_ajax_csc_save_tag_seo', $plugin_admin, 'ajax_save_tag_seo' );
 
 		// Add settings link on plugins page.
 		$plugin_basename = COMPLETE_SEO_CONTROL_PLUGIN_BASENAME;

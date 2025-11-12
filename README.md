@@ -45,15 +45,17 @@
 - **🏠 Homepage SEO** - Full control over homepage title, meta description, and H1 heading
 - **📝 Article Management** - Optimize blog posts with custom titles and descriptions
 - **📄 Page Management** - SEO settings for all WordPress pages
-- **📁 Category Archives** - Custom meta tags for category archive pages
+- **📁 Category Archives** - Custom meta tags, descriptions, and H1 headings for categories
+- **🏷️ Tag Archives** - Complete SEO control for tag pages with custom titles, descriptions, and H1
 - **🔗 Canonical URLs** - Control canonical URL output (optional, user-toggleable)
 
 ### 🎨 User Experience
 - **👁️ Live SERP Preview** - Real-time Google search result preview as you type
 - **📊 Character Counter** - Color-coded length indicators (blue/yellow/red)
-- **🔍 Smart Search** - Find posts, pages, or categories instantly
-- **📑 Pagination** - Easy navigation through large content libraries
+- **🔍 Smart Search** - Find posts, pages, categories, or tags instantly
+- **📑 Pagination** - Easy navigation through large content libraries (20 items per page)
 - **⚡ AJAX Interface** - Smooth, fast interactions without page reloads
+- **🎯 5-Tab Interface** - Organized tabs for Homepage, Articles, Categories, Tags, and Pages
 
 ### 🛡️ Quality & Security
 - **🔒 Secure by Design** - Nonce verification, capability checks, data sanitization
@@ -116,12 +118,13 @@ wp plugin activate complete-seo-control
 6. Click **Save Settings**
 
 ### Step 2: Optimize Your Content
-1. Navigate to **Articles**, **Pages**, or **Categories** tab
-2. Use the search box to find specific content
+1. Navigate to **Articles**, **Categories**, **Tags**, or **Pages** tab
+2. Use the search box to find specific content (works on all tabs)
 3. Click **Edit SEO** on any item
-4. Customize title and description in the modal
+4. Customize title, description, and H1 (for categories/tags) in the modal
 5. Watch the live preview update
-6. Click **Save** when satisfied
+6. Use pagination to navigate through all your content
+7. Click **Save** when satisfied
 
 ### Step 3: Monitor Your SEO
 - Check the statistics at the top of each tab
@@ -182,8 +185,10 @@ complete-seo-control/
 | | `_csc_post_seo_updated` | Last update timestamp |
 | | `_csc_page_seo` | Page SEO data |
 | | `_csc_page_seo_updated` | Last update timestamp |
-| **wp_termmeta** | `_csc_category_seo` | Category SEO data |
+| **wp_termmeta** | `_csc_category_seo` | Category SEO data (title, description, H1) |
 | | `_csc_category_seo_updated` | Last update timestamp |
+| | `_csc_tag_seo` | Tag SEO data (title, description, H1) |
+| | `_csc_tag_seo_updated` | Last update timestamp |
 
 ### 🔌 AJAX Endpoints
 
@@ -193,11 +198,14 @@ complete-seo-control/
 |--------|----------|
 | `csc_get_homepage_settings` | 📥 Retrieve homepage settings |
 | `csc_save_homepage_settings` | 💾 Save homepage settings |
-| `csc_get_articles_data` | 📝 Get paginated articles list |
+| `csc_get_articles_data` | 📝 Get paginated articles list (20 per page) |
 | `csc_save_article_seo` | ✅ Save article SEO settings |
-| `csc_get_pages_data` | 📄 Get paginated pages list |
+| `csc_get_categories_data` | 📁 Get paginated categories list (20 per page) |
+| `csc_save_category_seo` | ✅ Save category SEO settings (title, description, H1) |
+| `csc_get_tags_data` | 🏷️ Get paginated tags list (20 per page) |
+| `csc_save_tag_seo` | ✅ Save tag SEO settings (title, description, H1) |
+| `csc_get_pages_data` | 📄 Get paginated pages list (20 per page) |
 | `csc_save_page_seo` | ✅ Save page SEO settings |
-| `csc_save_category_seo` | ✅ Save category SEO settings |
 
 ---
 
@@ -260,10 +268,11 @@ add_action('csc_homepage_settings_saved', function($settings) {
 - [ ] Install on fresh WordPress installation
 - [ ] Activate plugin successfully
 - [ ] Homepage tab loads and saves settings
-- [ ] Articles tab displays posts with pagination
-- [ ] Pages tab displays pages with pagination
-- [ ] Categories tab displays categories
-- [ ] Modal opens and saves SEO settings
+- [ ] Articles tab displays posts with pagination (20 per page)
+- [ ] Categories tab displays categories with pagination and search
+- [ ] Tags tab displays tags with pagination and search
+- [ ] Pages tab displays pages with pagination (20 per page)
+- [ ] Modal opens and saves SEO settings (including H1 for categories/tags)
 - [ ] Search functionality works
 - [ ] SERP preview updates in real-time
 - [ ] Character counter shows correct colors

@@ -172,6 +172,11 @@ class Complete_SEO_Control_Admin {
 			$sanitized['h1_text'] = sanitize_text_field( $input['h1_text'] );
 		}
 
+		// Sanitize canonical setting
+		if ( isset( $input['enable_canonical'] ) ) {
+			$sanitized['enable_canonical'] = ( $input['enable_canonical'] === '1' ) ? '1' : '0';
+		}
+
 		return $sanitized;
 	}
 
@@ -203,7 +208,7 @@ class Complete_SEO_Control_Admin {
 			'page_title'       => get_bloginfo( 'name' ) . ' - ' . get_bloginfo( 'description' ),
 			'meta_description' => get_bloginfo( 'description' ),
 			'h1_text'          => get_bloginfo( 'name' ),
-			'enable_canonical' => '1',
+			'enable_canonical' => '0', // Disabled by default.
 		);
 	}
 
@@ -242,7 +247,8 @@ class Complete_SEO_Control_Admin {
 		$page_title       = isset( $_POST['page_title'] ) ? sanitize_text_field( wp_unslash( $_POST['page_title'] ) ) : '';
 		$meta_description = isset( $_POST['meta_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['meta_description'] ) ) : '';
 		$h1_text          = isset( $_POST['h1_text'] ) ? sanitize_text_field( wp_unslash( $_POST['h1_text'] ) ) : '';
-		$enable_canonical = isset( $_POST['enable_canonical'] ) ? '1' : '0';
+		// Get the canonical setting - it's sent as '1' or '0' from JavaScript
+		$enable_canonical = isset( $_POST['enable_canonical'] ) && $_POST['enable_canonical'] === '1' ? '1' : '0';
 
 		$settings = array(
 			'page_title'       => $page_title,
@@ -513,18 +519,20 @@ class Complete_SEO_Control_Admin {
 		$term_id            = isset( $_POST['term_id'] ) ? intval( $_POST['term_id'] ) : 0;
 		$custom_title       = isset( $_POST['custom_title'] ) ? sanitize_text_field( wp_unslash( $_POST['custom_title'] ) ) : '';
 		$custom_description = isset( $_POST['custom_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['custom_description'] ) ) : '';
+		$custom_h1          = isset( $_POST['custom_h1'] ) ? sanitize_text_field( wp_unslash( $_POST['custom_h1'] ) ) : '';
 
 		if ( ! $term_id || ! current_user_can( 'manage_categories' ) ) {
 			wp_send_json_error( __( 'Invalid category or insufficient permissions.', 'complete-seo-control' ) );
 		}
 
-		if ( empty( $custom_title ) && empty( $custom_description ) ) {
+		if ( empty( $custom_title ) && empty( $custom_description ) && empty( $custom_h1 ) ) {
 			delete_term_meta( $term_id, '_csc_category_seo' );
 			delete_term_meta( $term_id, '_csc_category_seo_updated' );
 		} else {
 			$seo_data = array(
 				'title'       => $custom_title,
 				'description' => $custom_description,
+				'h1_text'     => $custom_h1,
 			);
 			update_term_meta( $term_id, '_csc_category_seo', $seo_data );
 			update_term_meta( $term_id, '_csc_category_seo_updated', time() );
@@ -535,6 +543,183 @@ class Complete_SEO_Control_Admin {
 				'message'      => __( 'Category SEO settings saved successfully.', 'complete-seo-control' ),
 				'status'       => ( empty( $custom_title ) && empty( $custom_description ) ) ? 'default' : 'custom',
 				'last_updated' => ( empty( $custom_title ) && empty( $custom_description ) ) ? '-' : gmdate( 'Y-m-d H:i' ),
+			)
+		);
+	}
+
+	/**
+	 * AJAX handler to save tag SEO settings.
+	 *
+	 * @since    1.0.0
+	 */
+	public function ajax_save_tag_seo() {
+		check_ajax_referer( 'csc_nonce', 'nonce' );
+
+		$term_id            = isset( $_POST['term_id'] ) ? intval( $_POST['term_id'] ) : 0;
+		$custom_title       = isset( $_POST['custom_title'] ) ? sanitize_text_field( wp_unslash( $_POST['custom_title'] ) ) : '';
+		$custom_description = isset( $_POST['custom_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['custom_description'] ) ) : '';
+		$custom_h1          = isset( $_POST['custom_h1'] ) ? sanitize_text_field( wp_unslash( $_POST['custom_h1'] ) ) : '';
+
+		if ( ! $term_id || ! current_user_can( 'manage_categories' ) ) {
+			wp_send_json_error( __( 'Invalid tag or insufficient permissions.', 'complete-seo-control' ) );
+		}
+
+		if ( empty( $custom_title ) && empty( $custom_description ) && empty( $custom_h1 ) ) {
+			delete_term_meta( $term_id, '_csc_tag_seo' );
+			delete_term_meta( $term_id, '_csc_tag_seo_updated' );
+		} else {
+			$seo_data = array(
+				'title'       => $custom_title,
+				'description' => $custom_description,
+				'h1_text'     => $custom_h1,
+			);
+			update_term_meta( $term_id, '_csc_tag_seo', $seo_data );
+			update_term_meta( $term_id, '_csc_tag_seo_updated', time() );
+		}
+
+		wp_send_json_success(
+			array(
+				'message'      => __( 'Tag SEO settings saved successfully.', 'complete-seo-control' ),
+				'status'       => ( empty( $custom_title ) && empty( $custom_description ) && empty( $custom_h1 ) ) ? 'default' : 'custom',
+				'last_updated' => ( empty( $custom_title ) && empty( $custom_description ) && empty( $custom_h1 ) ) ? '-' : gmdate( 'Y-m-d H:i' ),
+			)
+		);
+	}
+
+	/**
+	 * AJAX handler to get categories data.
+	 *
+	 * @since    1.0.0
+	 */
+	public function ajax_get_categories_data() {
+		check_ajax_referer( 'csc_nonce', 'nonce' );
+
+		$page   = isset( $_POST['page'] ) ? max( 1, intval( $_POST['page'] ) ) : 1;
+		$search = isset( $_POST['search'] ) ? sanitize_text_field( wp_unslash( $_POST['search'] ) ) : '';
+
+		$per_page = 20;
+		$offset   = ( $page - 1 ) * $per_page;
+
+		$args = array(
+			'taxonomy'   => 'category',
+			'hide_empty' => false,
+			'orderby'    => 'name',
+			'order'      => 'ASC',
+			'number'     => $per_page,
+			'offset'     => $offset,
+		);
+
+		if ( ! empty( $search ) ) {
+			$args['search'] = $search;
+		}
+
+		$categories = get_terms( $args );
+
+		// Get total count.
+		$count_args = array(
+			'taxonomy'   => 'category',
+			'hide_empty' => false,
+			'fields'     => 'count',
+		);
+		if ( ! empty( $search ) ) {
+			$count_args['search'] = $search;
+		}
+		$total = intval( wp_count_terms( $count_args ) );
+
+		$items = array();
+		if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) {
+			foreach ( $categories as $category ) {
+				$seo_data   = get_term_meta( $category->term_id, '_csc_category_seo', true );
+				$has_custom = ! empty( $seo_data );
+
+				$items[] = array(
+					'id'          => $category->term_id,
+					'name'        => $category->name,
+					'slug'        => $category->slug,
+					'url'         => get_term_link( $category ),
+					'status'      => $has_custom ? 'custom' : 'default',
+					'title'       => $has_custom && ! empty( $seo_data['title'] ) ? $seo_data['title'] : '',
+					'description' => $has_custom && ! empty( $seo_data['description'] ) ? $seo_data['description'] : '',
+					'h1'          => $has_custom && ! empty( $seo_data['h1_text'] ) ? $seo_data['h1_text'] : '',
+				);
+			}
+		}
+
+		wp_send_json_success(
+			array(
+				'items'       => $items,
+				'total'       => $total,
+				'total_pages' => ceil( $total / $per_page ),
+				'current_page' => $page,
+			)
+		);
+	}
+
+	/**
+	 * AJAX handler to get tags data.
+	 *
+	 * @since    1.0.0
+	 */
+	public function ajax_get_tags_data() {
+		check_ajax_referer( 'csc_nonce', 'nonce' );
+
+		$page   = isset( $_POST['page'] ) ? max( 1, intval( $_POST['page'] ) ) : 1;
+		$search = isset( $_POST['search'] ) ? sanitize_text_field( wp_unslash( $_POST['search'] ) ) : '';
+
+		$per_page = 20;
+		$offset   = ( $page - 1 ) * $per_page;
+
+		$args = array(
+			'taxonomy'   => 'post_tag',
+			'hide_empty' => false,
+			'orderby'    => 'name',
+			'order'      => 'ASC',
+			'number'     => $per_page,
+			'offset'     => $offset,
+		);
+
+		if ( ! empty( $search ) ) {
+			$args['search'] = $search;
+		}
+
+		$tags = get_terms( $args );
+
+		// Get total count.
+		$count_args = array(
+			'taxonomy'   => 'post_tag',
+			'hide_empty' => false,
+			'fields'     => 'count',
+		);
+		if ( ! empty( $search ) ) {
+			$count_args['search'] = $search;
+		}
+		$total = intval( wp_count_terms( $count_args ) );
+
+		$items = array();
+		if ( ! empty( $tags ) && ! is_wp_error( $tags ) ) {
+			foreach ( $tags as $tag ) {
+				$seo_data   = get_term_meta( $tag->term_id, '_csc_tag_seo', true );
+				$has_custom = ! empty( $seo_data );
+
+				$items[] = array(
+					'id'          => $tag->term_id,
+					'name'        => $tag->name,
+					'slug'        => $tag->slug,
+					'url'         => get_term_link( $tag ),
+					'status'      => $has_custom ? 'custom' : 'default',
+					'title'       => $has_custom && ! empty( $seo_data['title'] ) ? $seo_data['title'] : '',
+					'description' => $has_custom && ! empty( $seo_data['description'] ) ? $seo_data['description'] : '',
+					'h1'          => $has_custom && ! empty( $seo_data['h1_text'] ) ? $seo_data['h1_text'] : '',
+				);
+			}
+		}
+
+		wp_send_json_success(
+			array(
+				'items'       => $items,
+				'total'       => $total,
+				'total_pages' => ceil( $total / $per_page ),
+				'current_page' => $page,
 			)
 		);
 	}

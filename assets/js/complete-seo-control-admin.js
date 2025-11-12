@@ -13,6 +13,8 @@
 		currentTab: 'homepage',
 		currentPage: {
 			articles: 1,
+			categories: 1,
+			tags: 1,
 			pages: 1
 		},
 		currentItem: {
@@ -31,6 +33,7 @@
 		initHomepage();
 		initArticles();
 		initCategories();
+		initTags();
 		initPages();
 		initModal();
 	});
@@ -68,6 +71,10 @@
 		// Load data if needed
 		if (tab === 'articles' && !$('#articles-list table').length) {
 			loadArticles(1);
+		} else if (tab === 'categories' && !$('#categories-list table').length) {
+			loadCategories(1);
+		} else if (tab === 'tags' && !$('#tags-list table').length) {
+			loadTags(1);
 		} else if (tab === 'pages' && !$('#pages-list table').length) {
 			loadPages(1);
 		}
@@ -356,11 +363,203 @@
 	 */
 
 	function initCategories() {
-		// Edit button (already rendered server-side, just delegate)
+		// Search
+		$('#category-search-btn').on('click', function() {
+			loadCategories(1, $('#category-search').val());
+		});
+		
+		$('#category-search').on('keypress', function(e) {
+			if (e.which === 13) {
+				loadCategories(1, $(this).val());
+			}
+		});
+		
+		// Edit button (delegated)
 		$(document).on('click', '.edit-category-seo', function() {
 			const data = $(this).data();
 			openModal('category', data);
 		});
+	}
+
+	function loadCategories(page, search) {
+		page = page || state.currentPage.categories;
+		search = search || '';
+		
+		showLoading(true);
+		
+		$.ajax({
+			url: cscAjax.ajax_url,
+			type: 'POST',
+			data: {
+				action: 'csc_get_categories_data',
+				nonce: cscAjax.nonce,
+				page: page,
+				search: search
+			},
+			success: function(response) {
+				if (response.success) {
+					renderCategories(response.data.items);
+					renderPagination('categories', {
+						current_page: response.data.current_page,
+						total_pages: response.data.total_pages
+					});
+					state.currentPage.categories = page;
+				}
+				showLoading(false);
+			},
+			error: function() {
+				showNotice('Error loading categories.', 'error');
+				showLoading(false);
+			}
+		});
+	}
+
+	function renderCategories(categories) {
+		if (!categories.length) {
+			$('#categories-list').html('<p class="loading-message">No categories found.</p>');
+			return;
+		}
+		
+		let html = '<table class="wp-list-table widefat fixed striped">';
+		html += '<thead><tr>';
+		html += '<th style="width: 60px;">ID</th>';
+		html += '<th>Category Name</th>';
+		html += '<th style="width: 100px;">Status</th>';
+		html += '<th style="width: 120px;">Actions</th>';
+		html += '</tr></thead>';
+		html += '<tbody>';
+		
+		categories.forEach(function(category) {
+			const badge = category.status === 'custom' ? 
+				'<span class="csc-badge badge-custom">Custom</span>' : 
+				'<span class="csc-badge badge-default">Default</span>';
+			
+			html += '<tr>';
+			html += '<td>' + category.id + '</td>';
+			html += '<td>';
+			html += '<strong>' + escapeHtml(category.name) + '</strong>';
+			html += '<div class="row-actions">';
+			html += '<span class="view"><a href="' + category.url + '" target="_blank">View</a></span>';
+			html += '</div>';
+			html += '</td>';
+			html += '<td>' + badge + '</td>';
+			html += '<td><button type="button" class="button button-small edit-category-seo" ' +
+				'data-type="category" ' +
+				'data-id="' + category.id + '" ' +
+				'data-name="' + escapeHtml(category.name) + '" ' +
+				'data-slug="' + escapeHtml(category.slug) + '" ' +
+				'data-title="' + escapeHtml(category.title) + '" ' +
+				'data-description="' + escapeHtml(category.description) + '" ' +
+				'data-h1="' + escapeHtml(category.h1) + '">' +
+				'Edit SEO</button></td>';
+			html += '</tr>';
+		});
+		
+		html += '</tbody></table>';
+		$('#categories-list').html(html);
+	}
+
+	/**
+	 * ========================================================================
+	 * TAGS TAB
+	 * ========================================================================
+	 */
+
+	function initTags() {
+		// Search
+		$('#tag-search-btn').on('click', function() {
+			loadTags(1, $('#tag-search').val());
+		});
+		
+		$('#tag-search').on('keypress', function(e) {
+			if (e.which === 13) {
+				loadTags(1, $(this).val());
+			}
+		});
+		
+		// Edit button (delegated)
+		$(document).on('click', '.edit-tag-seo', function() {
+			const data = $(this).data();
+			openModal('tag', data);
+		});
+	}
+
+	function loadTags(page, search) {
+		page = page || state.currentPage.tags;
+		search = search || '';
+		
+		showLoading(true);
+		
+		$.ajax({
+			url: cscAjax.ajax_url,
+			type: 'POST',
+			data: {
+				action: 'csc_get_tags_data',
+				nonce: cscAjax.nonce,
+				page: page,
+				search: search
+			},
+			success: function(response) {
+				if (response.success) {
+					renderTags(response.data.items);
+					renderPagination('tags', {
+						current_page: response.data.current_page,
+						total_pages: response.data.total_pages
+					});
+					state.currentPage.tags = page;
+				}
+				showLoading(false);
+			},
+			error: function() {
+				showNotice('Error loading tags.', 'error');
+				showLoading(false);
+			}
+		});
+	}
+
+	function renderTags(tags) {
+		if (!tags.length) {
+			$('#tags-list').html('<p class="loading-message">No tags found.</p>');
+			return;
+		}
+		
+		let html = '<table class="wp-list-table widefat fixed striped">';
+		html += '<thead><tr>';
+		html += '<th style="width: 60px;">ID</th>';
+		html += '<th>Tag Name</th>';
+		html += '<th style="width: 100px;">Status</th>';
+		html += '<th style="width: 120px;">Actions</th>';
+		html += '</tr></thead>';
+		html += '<tbody>';
+		
+		tags.forEach(function(tag) {
+			const badge = tag.status === 'custom' ? 
+				'<span class="csc-badge badge-custom">Custom</span>' : 
+				'<span class="csc-badge badge-default">Default</span>';
+			
+			html += '<tr>';
+			html += '<td>' + tag.id + '</td>';
+			html += '<td>';
+			html += '<strong>' + escapeHtml(tag.name) + '</strong>';
+			html += '<div class="row-actions">';
+			html += '<span class="view"><a href="' + tag.url + '" target="_blank">View</a></span>';
+			html += '</div>';
+			html += '</td>';
+			html += '<td>' + badge + '</td>';
+			html += '<td><button type="button" class="button button-small edit-tag-seo" ' +
+				'data-type="tag" ' +
+				'data-id="' + tag.id + '" ' +
+				'data-name="' + escapeHtml(tag.name) + '" ' +
+				'data-slug="' + escapeHtml(tag.slug) + '" ' +
+				'data-title="' + escapeHtml(tag.title) + '" ' +
+				'data-description="' + escapeHtml(tag.description) + '" ' +
+				'data-h1="' + escapeHtml(tag.h1) + '">' +
+				'Edit SEO</button></td>';
+			html += '</tr>';
+		});
+		
+		html += '</tbody></table>';
+		$('#tags-list').html(html);
 	}
 
 	/**
@@ -510,6 +709,15 @@
 		$('#modal-seo-title').val(data.title || '');
 		$('#modal-seo-description').val(data.description || '');
 		
+		// Show/hide H1 field based on type (only for categories and tags)
+		if (type === 'category' || type === 'tag') {
+			$('#modal-h1-field').show();
+			$('#modal-seo-h1').val(data.h1 || '');
+		} else {
+			$('#modal-h1-field').hide();
+			$('#modal-seo-h1').val('');
+		}
+		
 		// Update preview
 		updateModalPreview();
 		updateModalTitleCharCount();
@@ -533,6 +741,7 @@
 		const { type, id } = state.currentItem;
 		const title = $('#modal-seo-title').val();
 		const description = $('#modal-seo-description').val();
+		const h1 = $('#modal-seo-h1').val();
 		
 		const button = $('#modal-save-btn');
 		button.prop('disabled', true).text('Saving...');
@@ -549,6 +758,9 @@
 		} else if (type === 'category') {
 			action = 'csc_save_category_seo';
 			dataKey = 'term_id';
+		} else if (type === 'tag') {
+			action = 'csc_save_tag_seo';
+			dataKey = 'term_id';
 		}
 		
 		const ajaxData = {
@@ -557,6 +769,12 @@
 			custom_title: title,
 			custom_description: description
 		};
+		
+		// Add H1 for categories and tags
+		if (type === 'category' || type === 'tag') {
+			ajaxData.custom_h1 = h1;
+		}
+		
 		ajaxData[dataKey] = id;
 		
 		$.ajax({
@@ -574,10 +792,12 @@
 						// Reload the appropriate tab
 						if (type === 'article') {
 							loadArticles();
+						} else if (type === 'category') {
+							loadCategories();
+						} else if (type === 'tag') {
+							loadTags();
 						} else if (type === 'page') {
 							loadPages();
-						} else if (type === 'category') {
-							location.reload(); // Reload to update server-rendered category list
 						}
 					}, 1000);
 				} else {
@@ -712,6 +932,10 @@
 			
 			if (dataType === 'articles') {
 				loadArticles(page);
+			} else if (dataType === 'categories') {
+				loadCategories(page);
+			} else if (dataType === 'tags') {
+				loadTags(page);
 			} else if (dataType === 'pages') {
 				loadPages(page);
 			}
